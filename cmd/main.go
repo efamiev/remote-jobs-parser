@@ -1,14 +1,24 @@
 package main
 
-import "hh-scraper/internal/parsers"
-
-// import "../internal/parsers"
+import (
+	"fmt"
+	"hh-scraper/internal/parsers"
+	"os"
+	"strconv"
+)
 
 func main() {
-	//TODO:  Сделать http сервер, который будет возвращаться список вакансий постранично. Так же добавить редис для кэширования результатов
-	// Далее добавить сокеты для отслеживания прогресса собирания вакансий
-	// Настроить nginx на vps и сделать CI/CD через github
+	if len(os.Args) < 2 {
+		fmt.Println("Usage: go run main.go [arguments]")
+		return
+	}
 
-	parsers.Parse()
+	page, err := strconv.Atoi(os.Args[1:][0])
+	if err != nil {
+		fmt.Println("Pass page number")
+		return
+	}
+
+	fmt.Println(parsers.Start(page - 1))
 }
 
