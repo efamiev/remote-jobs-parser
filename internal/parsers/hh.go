@@ -5,11 +5,11 @@ import (
 	"log"
 	"net/http"
 
-	"hh-scraper/internal/utils"
 	"github.com/PuerkitoBio/goquery"
+	"hh-scraper/internal/utils"
 )
 
-func Parse(out chan <- []string, client *http.Client, url string) {
+func Parse(out chan<- []string, client *http.Client, url string) {
 	req := utils.Request(url)
 
 	res, err := client.Do(req)
@@ -23,7 +23,7 @@ func Parse(out chan <- []string, client *http.Client, url string) {
 		log.Fatal(err)
 	}
 
-	jobTitles := doc.Find(`[id="a11y-main-content"] [data-qa="serp-item__title-text"]`).Map(func(index int, item *goquery.Selection) string {
+	jobTitles := doc.Find(`[id="a11y-main-content"] [data-qa="serp-item__title-text"]`).Map(func(_ int, item *goquery.Selection) string {
 		return item.Text()
 	})
 	

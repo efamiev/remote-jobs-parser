@@ -19,6 +19,7 @@ func main() {
 		return
 	}
 
-	fmt.Println(parsers.Start(page - 1))
-}
+	url := "https://hh.ru/search/vacancy?text=%22go%22&salary=&professional_role=96&items_on_page=20"
 
+	fmt.Println(parsers.Start(url, page-1))
+}

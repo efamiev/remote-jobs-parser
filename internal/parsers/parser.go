@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"sync"
 	"strconv"
-	"hh-scraper/internal/utils"
+	"sync"
 
+	"hh-scraper/internal/utils"
 	"github.com/PuerkitoBio/goquery"
 )
 
@@ -35,13 +35,11 @@ func getPageCount(client *http.Client, url string) int {
 	if err != nil {
 		log.Fatal(err)
 	}
-	
+
 	return count
 }
 
-func Start(page int) []string {
-	url := "https://hh.ru/search/vacancy?text=%22go%22&salary=&professional_role=96&items_on_page=" + strconv.Itoa(itemsOnPage)
-
+func Start(url string, page int) []string {
 	client := &http.Client{}
 	pageCount := getPageCount(client, url)
 
@@ -50,21 +48,21 @@ func Start(page int) []string {
 
 		return []string{}
 	}
-	
+
 	results := make(chan []string, pageCount)
 	var wg sync.WaitGroup
-	
+
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
 
-		Parse(results, client, url + "&page=" + strconv.Itoa(page))
+		Parse(results, client, url+"&page="+strconv.Itoa(page))
 	}()
 
 	wg.Wait()
 	close(results)
-	
-	flatResult := make([]string, itemsOnPage)
+
+	flatResult := make([]string, 0, 20)
 
 	for x := range results {
 		flatResult = append(flatResult, x...)
@@ -72,4 +70,3 @@ func Start(page int) []string {
 
 	return flatResult
 }
-

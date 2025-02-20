@@ -19,4 +19,3 @@ func Request(url string) *http.Request {
 
 	return req
 }
-
