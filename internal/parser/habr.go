@@ -1,15 +1,15 @@
 package parser
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
-	"github.com/PuerkitoBio/goquery"
 	"remote-jobs-parser/internal/utils"
+
+	"github.com/PuerkitoBio/goquery"
 )
 
-func ParseHarb(out chan<- []string, client *http.Client, url string) {
+func ParseHabr(out chan<- []string, client *http.Client, url string) {
 	defer close(out)
 
 	req := utils.Request(url)
@@ -30,6 +30,6 @@ func ParseHarb(out chan<- []string, client *http.Client, url string) {
 			return item.Text()
 		})
 
-	fmt.Println("Количество вакансий на странице:", len(jobTitles))
+	log.Println("Количество вакансий на странице habr:", len(jobTitles))
 	out <- jobTitles
 }

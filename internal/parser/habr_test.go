@@ -25,7 +25,7 @@ func TestParseHabr(t *testing.T) {
 		results := make(chan []string, 2)
 
 		client := &http.Client{}
-		ParseHarb(results, client, server.URL+"/vacancies?q=go&sort=date&type=all")
+		ParseHabr(results, client, server.URL+"/vacancies?q=go&sort=date&type=all")
 
 		actualResults := []string{}
 

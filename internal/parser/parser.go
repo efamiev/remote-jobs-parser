@@ -1,74 +1,43 @@
 package parser
 
 import (
-	"fmt"
 	"log"
 	"net/http"
-	"strconv"
-	"sync"
-
-	"github.com/PuerkitoBio/goquery"
-	"remote-jobs-parser/internal/utils"
 )
 
-const itemsOnPage = 20
-
-func getPageCount(client *http.Client, url string) int {
-	req := utils.Request(url)
-
-	res, err := client.Do(req)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer res.Body.Close()
-
-	doc, err := goquery.NewDocumentFromReader(res.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	pageCount := doc.Find(`[class^="magritte-number-pages-wrapper"] li`).Eq(-2).Text()
-
-	fmt.Println("Количество страниц:", pageCount)
-
-	count, err := strconv.Atoi(pageCount)
-	if err != nil {
-		log.Println("Error converting the pageCount to a string", err)
-
-		return 0
-	}
-
-	return count
-}
+// const itemsOnPage = 20
 
 func Start(url string, page int) []string {
 	client := &http.Client{}
-	pageCount := getPageCount(client, url)
 
-	if pageCount < page {
-		fmt.Println("The page does not exist")
+	hh := make(chan []string)
+	habr := make(chan []string)
+	
+	go ParseHH(hh, client, "https://hh.ru/search/vacancy?text=%22go%22&salary=&professional_role=96&items_on_page=20")
+	go ParseHabr(habr, client, "https://career.habr.com/vacancies?page=1&type=all")
 
-		return []string{}
+	results := []string{}
+
+	for {
+		select {
+		case jobsList, ok := <-hh:
+			if !ok {
+				hh = nil
+				break
+			}
+			results = append(results, jobsList...)
+
+		case jobsList, ok := <-habr:
+			if !ok {
+				habr = nil
+				break	
+			} 
+			results = append(results, jobsList...)
+		}
+
+		if hh == nil && habr == nil {
+			log.Println("Final jobs count", len(results))
+			return results
+		}
 	}
-
-	results := make(chan []string, pageCount)
-	var wg sync.WaitGroup
-
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-
-		ParseHH(results, client, url+"&page="+strconv.Itoa(page))
-	}()
-
-	wg.Wait()
-	close(results)
-
-	flatResult := make([]string, 0, 20)
-
-	for x := range results {
-		flatResult = append(flatResult, x...)
-	}
-
-	return flatResult
 }
