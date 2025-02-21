@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"sync"
 
-	"hh-scraper/internal/utils"
+	"remote-jobs-parser/internal/utils"
 	"github.com/PuerkitoBio/goquery"
 )
 
@@ -33,7 +33,9 @@ func getPageCount(client *http.Client, url string) int {
 
 	count, err := strconv.Atoi(pageCount)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		
+		return 0
 	}
 
 	return count

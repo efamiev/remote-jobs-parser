@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/PuerkitoBio/goquery"
-	"hh-scraper/internal/utils"
+	"remote-jobs-parser/internal/utils"
 )
 
 func Parse(out chan<- []string, client *http.Client, url string) {

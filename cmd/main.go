@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
-	"hh-scraper/internal/parsers"
 	"os"
 	"strconv"
+	
+	"remote-jobs-parser/internal/parsers"
 )
 
 func main() {
