@@ -1,4 +1,4 @@
-package parsers
+package parser
 
 import (
 	"fmt"
@@ -10,6 +10,8 @@ import (
 )
 
 func ParseHarb(out chan<- []string, client *http.Client, url string) {
+	defer close(out)
+
 	req := utils.Request(url)
 
 	res, err := client.Do(req)
@@ -23,12 +25,11 @@ func ParseHarb(out chan<- []string, client *http.Client, url string) {
 		log.Fatal(err)
 	}
 
-	jobTitles := doc.Find(`.vacancy-card .vacancy-card__title`).Map(func(_ int, item *goquery.Selection) string {
-		return item.Text()
-	})
-	
+	jobTitles :=
+		doc.Find(`.vacancy-card .vacancy-card__title`).Map(func(_ int, item *goquery.Selection) string {
+			return item.Text()
+		})
+
 	fmt.Println("Количество вакансий на странице:", len(jobTitles))
 	out <- jobTitles
 }
-
-

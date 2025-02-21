@@ -1,4 +1,4 @@
-package parsers
+package parser
 
 import (
 	"fmt"
@@ -6,8 +6,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"remote-jobs-parser/test"
 	"github.com/stretchr/testify/assert"
+	"remote-jobs-parser/test"
 )
 
 func TestStart(t *testing.T) {

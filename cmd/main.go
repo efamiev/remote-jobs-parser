@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 	"strconv"
-	
-	"remote-jobs-parser/internal/parsers"
+
+	"remote-jobs-parser/internal/parser"
 )
 
 func main() {
@@ -22,5 +22,5 @@ func main() {
 
 	url := "https://hh.ru/search/vacancy?text=%22go%22&salary=&professional_role=96&items_on_page=20"
 
-	fmt.Println(parsers.Start(url, page-1))
+	fmt.Println(parser.Start(url, page-1))
 }

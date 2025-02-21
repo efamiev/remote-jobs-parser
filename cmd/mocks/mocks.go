@@ -8,4 +8,3 @@ func main() {
 	test.SaveHHPage()
 	test.SaveHabrPage()
 }
-

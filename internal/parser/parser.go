@@ -1,4 +1,4 @@
-package parsers
+package parser
 
 import (
 	"fmt"
@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"sync"
 
-	"remote-jobs-parser/internal/utils"
 	"github.com/PuerkitoBio/goquery"
+	"remote-jobs-parser/internal/utils"
 )
 
 const itemsOnPage = 20
@@ -33,8 +33,8 @@ func getPageCount(client *http.Client, url string) int {
 
 	count, err := strconv.Atoi(pageCount)
 	if err != nil {
-		log.Println(err)
-		
+		log.Println("Error converting the pageCount to a string", err)
+
 		return 0
 	}
 
@@ -58,7 +58,7 @@ func Start(url string, page int) []string {
 	go func() {
 		defer wg.Done()
 
-		Parse(results, client, url+"&page="+strconv.Itoa(page))
+		ParseHH(results, client, url+"&page="+strconv.Itoa(page))
 	}()
 
 	wg.Wait()
