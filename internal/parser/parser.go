@@ -5,17 +5,28 @@ import (
 	"net/http"
 )
 
-// const itemsOnPage = 20
+type ParserParams struct {
+	Service string
+	Url string
+}
 
-func Start(url string, page int) []string {
+func Start(params []ParserParams) []string {
 	client := &http.Client{}
 
 	hh := make(chan []string)
 	habr := make(chan []string)
-	
-	go ParseHH(hh, client, "https://hh.ru/search/vacancy?text=%22go%22&salary=&professional_role=96&items_on_page=20")
-	go ParseHabr(habr, client, "https://career.habr.com/vacancies?page=1&type=all")
 
+	for _, el := range params {
+		switch el.Service {
+		case "hh":
+			go ParseHH(hh, client, el.Url)
+		case "habr":
+			go ParseHabr(habr, client, el.Url)
+		default:
+			log.Fatal("Unexpected Service name", el)
+		}
+	}
+	
 	results := []string{}
 
 	for {

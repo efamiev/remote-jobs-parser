@@ -30,7 +30,12 @@ func TestStart(t *testing.T) {
 		habrResults := []string{"Golang-разработчик (Разработчик облачного оркестратора)", "Специалист по статическому анализу кода (Svace, AppSec)", "Ведущий системный инженер Linux", "Go Developer (SIEM KUMA)", "Tech Lead Golang в проект Deckhouse", "Ведущий Go разработчик (Платформа разработки)", "Ведущий SRE инженер (Платформа разработки)", "Стажёр Flutter-разработчик", "Lead Fullstack Developer (удаленно)", "Ruby / Go Developer", "Product Owner (slots)", "Senior PHP Программист", "Тимлид группы анализа клиентских данных и веб-аналитики/Senior Data Scientist", "Senior Go-разработчик", "Бизнес-аналитик (разработка, автоматизация)", "User acquisition manager", "Senior Golang Engineer", "Intern Golang Developer [Развитие инфраструктуры]", "Системный аналитик", "Site Reliability Engineer (SRE)", "Бизнес-аналитик", "Старший бизнес-аналитик", "Старший системный аналитик", "Go-pазработчик", " Middle/Senior Go Developer [Голосовая экосистема]"}
 		expectedResults := append(habrResults, hhResults...)
 
-		actualResults := Start(server.URL, 1)
+		params := []ParserParams{
+			{Service: "hh", Url: "/search/vacancy?text=%22go%22&salary=&professional_role=96&items_on_page=20"},
+			{Service: "habr", Url: "/vacancies?page=4&type=all"},
+		}
+
+		actualResults := Start(params)
 
 		assert.Equal(t, len(expectedResults), len(actualResults), "Results should match the mocked content")
 		
