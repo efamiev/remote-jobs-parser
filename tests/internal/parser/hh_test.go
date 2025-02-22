@@ -1,4 +1,4 @@
-package parser
+package tests
 
 import (
 	"fmt"
@@ -6,13 +6,13 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"remote-jobs-parser/test"
-
+	"remote-jobs-parser/tests/helpers"
 	"github.com/stretchr/testify/assert"
+	"remote-jobs-parser/internal/parser"
 )
 
 func TestParseHH(t *testing.T) {
-	html := test.ReadHTML("hh-page.html")
+	html := helpers.ReadHTML("hh-page.html")
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, html)
@@ -30,7 +30,7 @@ func TestParseHH(t *testing.T) {
 		results := make(chan []string, 2)
 
 		client := &http.Client{}
-		ParseHH(results, client, server.URL+"/vacancies?q=go&sort=date&type=all")
+		parser.ParseHH(results, client, server.URL+"/vacancies?q=go&sort=date&type=all")
 	})
 
 	t.Run("Returns jobs names", func(t *testing.T) {
@@ -39,7 +39,7 @@ func TestParseHH(t *testing.T) {
 		results := make(chan []string, 2)
 
 		client := &http.Client{}
-		ParseHH(results, client, server.URL+"/vacancies?q=go&sort=date&type=all")
+		parser.ParseHH(results, client, server.URL+"/vacancies?q=go&sort=date&type=all")
 
 		actualResults := []string{}
 
@@ -50,3 +50,4 @@ func TestParseHH(t *testing.T) {
 		assert.Equal(t, expectedResults, actualResults, "Results should match the mocked content")
 	})
 }
+

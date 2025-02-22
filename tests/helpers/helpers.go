@@ -1,4 +1,4 @@
-package test
+package helpers
 
 import (
 	"io"
@@ -10,7 +10,7 @@ import (
 )
 
 func ReadHTML(name string) string {
-	file, err := os.Open("/Users/famiev/projects/remote-jobs-parser/test/" + name)
+	file, err := os.Open("/Users/famiev/projects/remote-jobs-parser/tests/" + name)
 	if err != nil {
 		log.Fatalf("failed to open file: %s", err)
 	}
@@ -36,7 +36,7 @@ func SaveHHPage() {
 	}
 	defer res.Body.Close()
 
-	file, err := os.Create("test/hh-page.html")
+	file, err := os.Create("tests/hh-page.html")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -60,7 +60,7 @@ func SaveHabrPage() {
 	}
 	defer res.Body.Close()
 
-	file, err := os.Create("test/habr-page.html")
+	file, err := os.Create("tests/habr-page.html")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -71,3 +71,4 @@ func SaveHabrPage() {
 		log.Fatal(err)
 	}
 }
+

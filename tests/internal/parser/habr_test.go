@@ -1,4 +1,4 @@
-package parser
+package tests
 
 import (
 	"fmt"
@@ -6,12 +6,13 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"remote-jobs-parser/tests/helpers"
 	"github.com/stretchr/testify/assert"
-	"remote-jobs-parser/test"
+	"remote-jobs-parser/internal/parser"
 )
 
 func TestParseHabr(t *testing.T) {
-	html := test.ReadHTML("habr-page.html")
+	html := helpers.ReadHTML("habr-page.html")
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, html)
@@ -25,7 +26,7 @@ func TestParseHabr(t *testing.T) {
 		results := make(chan []string, 2)
 
 		client := &http.Client{}
-		ParseHabr(results, client, server.URL+"/vacancies?q=go&sort=date&type=all")
+		parser.ParseHabr(results, client, server.URL+"/vacancies?q=go&sort=date&type=all")
 
 		actualResults := []string{}
 

@@ -1,10 +1,10 @@
 package main
 
 import (
-	"remote-jobs-parser/test"
+	"remote-jobs-parser/tests/helpers"
 )
 
 func main() {
-	test.SaveHHPage()
-	test.SaveHabrPage()
+	helpers.SaveHHPage()
+	helpers.SaveHabrPage()
 }
