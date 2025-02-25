@@ -71,4 +71,3 @@ func SaveHabrPage() {
 		log.Fatal(err)
 	}
 }
-

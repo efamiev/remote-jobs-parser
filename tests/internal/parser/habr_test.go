@@ -50,7 +50,7 @@ func TestParseHabr(t *testing.T) {
 			{Id: "1000152829", Company: "МТС", Title: " Middle/Senior Go Developer [Голосовая экосистема]", Link: "/vacancies/1000152829", Service: "habr"}}
 
 		results := make(chan []parser.VacancyData, 2)
-		
+
 		client := &http.Client{}
 		parser.ParseHabr(results, client, server.URL+"/vacancies?q=go&sort=date&type=all")
 

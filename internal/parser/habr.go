@@ -36,7 +36,7 @@ func ParseHabr(out chan<- []VacancyData, client *http.Client, url string) {
 
 		return vacancy
 	})
-	
+
 	log.Println("Count of vacancies on the Habr:", len(vacancies))
 	out <- vacancies
 }

@@ -3,15 +3,16 @@ package parser
 import (
 	"log"
 	"net/http"
+	"strings"
 
 	"remote-jobs-parser/internal/utils"
 
 	"github.com/PuerkitoBio/goquery"
 )
 
-func ParseHH(out chan<- []string, client *http.Client, url string) {
+func ParseHH(out chan<- []VacancyData, client *http.Client, url string) {
 	defer close(out)
-	
+
 	req := utils.Request(url)
 
 	res, err := client.Do(req)
@@ -25,11 +26,18 @@ func ParseHH(out chan<- []string, client *http.Client, url string) {
 		log.Fatal(err)
 	}
 
-	jobTitles :=
-		doc.Find(`[id="a11y-main-content"] [data-qa="serp-item__title-text"]`).Map(func(_ int, item *goquery.Selection) string {
-			return item.Text()
-		})
+	vacancies := goquery.Map(doc.Find("#a11y-main-content [class^='vacancy-card--']"), func(i int, s *goquery.Selection) VacancyData {
+		vacancy := VacancyData{Service: "hh"}
 
-	log.Println("Количество вакансий на странице hh:", len(jobTitles))
-	out <- jobTitles
+		vacancy.Company = s.Find(`[class^='company-name-badges-container'] [data-qa='vacancy-serp__vacancy-employer-text']`).Text()
+		vacancy.Title = s.Find(".bloko-header-section-2").Text()
+		vacancy.Link = s.Find(".bloko-header-section-2 a").AttrOr("href", "")
+		vacancy.Id = strings.Split(strings.Split(vacancy.Link, "/")[4], "?")[0]
+
+		return vacancy
+	})
+
+	log.Println("Count of vacancies on the HH:", len(vacancies))
+
+	out <- vacancies
 }
