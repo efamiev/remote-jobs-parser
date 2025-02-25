@@ -54,12 +54,16 @@ func TestParseHabr(t *testing.T) {
 		client := &http.Client{}
 		parser.ParseHabr(results, client, server.URL+"/vacancies?q=go&sort=date&type=all")
 
-		actualResults := []parser.VacancyData{}
+		actualResults := append([]parser.VacancyData{}, <-results...)
 
-		for x := range results {
-			actualResults = append(actualResults, x...)
+		resultsIsEmpty := true		
+		select {
+			case  <-results:
+				resultsIsEmpty = false
+			default:				
 		}
 
+		assert.Equal(t, true, resultsIsEmpty, "Results should be empty")
 		assert.Equal(t, expectedResults, actualResults, "Results should match the mocked content")
 	})
 }

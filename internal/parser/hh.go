@@ -11,8 +11,6 @@ import (
 )
 
 func ParseHH(out chan<- []VacancyData, client *http.Client, url string) {
-	defer close(out)
-
 	req := utils.Request(url)
 
 	res, err := client.Do(req)

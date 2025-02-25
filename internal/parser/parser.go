@@ -21,8 +21,8 @@ type VacancyData struct {
 func Start(params []ParserParams) []VacancyData {
 	client := &http.Client{}
 
-	hh := make(chan []VacancyData)
-	habr := make(chan []VacancyData)
+	hh := make(chan []VacancyData, 1)
+	habr := make(chan []VacancyData, 1)
 
 	for _, el := range params {
 		switch el.Service {
@@ -37,26 +37,15 @@ func Start(params []ParserParams) []VacancyData {
 
 	results := []VacancyData{}
 
-	for {
+	for range make([]int, len(params)) {
 		select {
-		case jobsList, ok := <-hh:
-			if !ok {
-				hh = nil
-				break
-			}
+		case jobsList := <-habr:
 			results = append(results, jobsList...)
 
-		case jobsList, ok := <-habr:
-			if !ok {
-				habr = nil
-				break
-			}
+		case jobsList := <-hh:
 			results = append(results, jobsList...)
-		}
-
-		if hh == nil && habr == nil {
-			log.Println("Final jobs count", len(results))
-			return results
 		}
 	}
+
+	return results
 }

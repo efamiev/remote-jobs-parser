@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"strings"
 	"testing"
 
 	"remote-jobs-parser/internal/parser"
@@ -63,14 +62,16 @@ func TestParseHH(t *testing.T) {
 		client := &http.Client{}
 		parser.ParseHH(results, client, server.URL+"/vacancies?q=go&sort=date&type=all")
 
-		actualResults := []parser.VacancyData{}
+		actualResults := append([]parser.VacancyData{}, <-results...)
 
-		assert.Equal(t, "116873691", strings.Split(strings.Split("https://hh.ru/vacancy/116873691?query=%22go%22&hhtmFrom=vacancy_search_list", "/")[4], "?")[0])
-
-		for x := range results {
-			actualResults = append(actualResults, x...)
+		resultsIsEmpty := true		
+		select {
+			case  <-results:
+				resultsIsEmpty = false
+			default:
 		}
 
+		assert.Equal(t, true, resultsIsEmpty, "Results should be empty")
 		assert.Equal(t, expectedResults, actualResults, "Results should match the mocked content")
 	})
 }
