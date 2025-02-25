@@ -3,13 +3,14 @@ package parser
 import (
 	"log"
 	"net/http"
+	"strings"
 
 	"remote-jobs-parser/internal/utils"
 
 	"github.com/PuerkitoBio/goquery"
 )
 
-func ParseHabr(out chan<- []string, client *http.Client, url string) {
+func ParseHabr(out chan<- []VacancyData, client *http.Client, url string) {
 	defer close(out)
 
 	req := utils.Request(url)
@@ -25,11 +26,17 @@ func ParseHabr(out chan<- []string, client *http.Client, url string) {
 		log.Fatal(err)
 	}
 
-	jobTitles :=
-		doc.Find(`.vacancy-card .vacancy-card__title`).Map(func(_ int, item *goquery.Selection) string {
-			return item.Text()
-		})
+	vacancies := goquery.Map(doc.Find(".vacancy-card"), func(i int, s *goquery.Selection) VacancyData {
+		vacancy := VacancyData{Service: "habr"}
 
-	log.Println("Количество вакансий на странице habr:", len(jobTitles))
-	out <- jobTitles
+		vacancy.Company = s.Find(".vacancy-card__company-title").Text()
+		vacancy.Title = s.Find(".vacancy-card__title").Text()
+		vacancy.Link = s.Find(".vacancy-card__title a").AttrOr("href", "")
+		vacancy.Id = strings.Split(vacancy.Link, "/")[2]
+
+		return vacancy
+	})
+	
+	log.Println("Count of vacancies on the Habr:", len(vacancies))
+	out <- vacancies
 }

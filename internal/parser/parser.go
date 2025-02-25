@@ -7,14 +7,22 @@ import (
 
 type ParserParams struct {
 	Service string
-	Url string
+	Url     string
 }
 
-func Start(params []ParserParams) []string {
+type VacancyData struct {
+	Id      string
+	Company string
+	Title   string
+	Link    string
+	Service string
+}
+
+func Start(params []ParserParams) []VacancyData {
 	client := &http.Client{}
 
 	hh := make(chan []string)
-	habr := make(chan []string)
+	habr := make(chan []VacancyData)
 
 	for _, el := range params {
 		switch el.Service {
@@ -26,23 +34,23 @@ func Start(params []ParserParams) []string {
 			log.Fatal("Unexpected Service name", el)
 		}
 	}
-	
-	results := []string{}
+
+	results := []VacancyData{}
 
 	for {
 		select {
-		case jobsList, ok := <-hh:
-			if !ok {
-				hh = nil
-				break
-			}
-			results = append(results, jobsList...)
+		// case jobsList, ok := <-hh:
+		// 	if !ok {
+		// 		hh = nil
+		// 		break
+		// 	}
+		// 	results = append(results, jobsList...)
 
 		case jobsList, ok := <-habr:
 			if !ok {
 				habr = nil
-				break	
-			} 
+				break
+			}
 			results = append(results, jobsList...)
 		}
 
